@@ -116,7 +116,4 @@ def main():
             operations[choice - 1]()
         else:
             print("Invalid choice. Try again.\n")
-
-
-if __name__ == "__main__":
-    main()
+main()
