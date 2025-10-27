@@ -66,11 +66,11 @@ def create_record():
 
 
 def update_record():
-	print("Updating record feature — yet to be implemented.")
+	print("Updating...")
 
 
 def delete_record():
-	print("Deleting record feature — yet to be implemented.")
+	print("Deleting...")
 
 
 def exiting():
@@ -95,3 +95,4 @@ def main():
 
 
 main()
+
