@@ -1,81 +1,114 @@
 import xml.etree.ElementTree as et
 import os
 
-DATA_FILE = "Accounts.xml"
-FIELDS_FILE = "fields.cfg"
+FIELDS_FILE = "fields.xml"
+DATA_FILE = "Accounts_data.xml"
 MENU_FILE = "menu.cfg"
 
-fields = []
-tree = None
-root = None
+def load_fields():
+	global root_tag, record_tag, fields
+	if not os.path.exists(FIELDS_FILE):
+		print(f"File '{FIELDS_FILE}' not found.")
+		exit()
+	tree = et.parse(FIELDS_FILE)
+	root = tree.getroot()
+	root_tag = root.find("RootTag").text
+	record_tag = root.find("RecordTag").text
+	fields = [field.text for field in root.findall("Field")]
 
 def load_data():
-	global fields, tree, root
-
-	with open(FIELDS_FILE, 'r') as fp_fields:
-		fields = fp_fields.read().splitlines()
-		if not fields:
-			print("No field names found.")
-			exit()
-	print(f"Loaded fields: {fields}")
-
+	global tree, root
 	if os.path.exists(DATA_FILE):
 		tree = et.parse(DATA_FILE)
 		root = tree.getroot()
 	else:
-		root = et.Element("Bank_Accounts")
+		root = et.Element(root_tag)
 		tree = et.ElementTree(root)
 		save_data()
-
-
-def save_data():
-	global tree
-	et.indent(tree, space="\t", level=0)
-	tree.write(DATA_FILE, encoding="utf-8", xml_declaration=True)
 
 def display_menu():
 	if not os.path.exists(MENU_FILE):
 		print("Menu file not found.")
 		return
 	with open(MENU_FILE, 'r') as fp_menu:
-		menu = fp_menu.read()
-		print(menu)
+		print(fp_menu.read())
 
-def get_input_from_user():
-	return [input(f"Enter {field}: ") for field in fields]
+def save_data():
+	tree.write(DATA_FILE, encoding='utf-8', xml_declaration=True)
+
+# def get_input_from_user():
+# 	return [input(f"Enter {field}: ") for field in fields]
+
+# def create_record():
+# 	values = get_input_from_user()
+# 	record = et.SubElement(root, record_tag)
+# 	for field, value in zip(fields, values):
+# 		et.SubElement(record, field).text = value
+# 	save_data()
+# 	print("Record added successfully.\n")
+
+def create_record():
+	record = et.SubElement(root, record_tag)
+	for field in fields:
+		value = input(f"Enter {field}: ")
+		et.SubElement(record, field).text = value
+	save_data()
+	print("Record added successfully.\n")
 
 def read_records():
 	if not list(root):
-		print("No accounts found in XML File.")
+		print("No records found.\n")
 		return
 
-	for i, account in enumerate(root.findall("Account"), 1):
-		print(f"\nAccount {i}:")
-		for element in account:
-			print(f"{element.tag}: {element.text}")
+	for index, record in enumerate(root, 1):
+		print(f"\nRecord {index}:")
+		for element in record:
+			print(f"    {element.tag}: {element.text}")
+	print()
 	
+def get_userid_to_search(action):
+	return(input(f"Enter {fields[0]} to {action}: "))
 
-def create_record():
-	values = get_input_from_user()
-	account = et.SubElement(root, "Account")
-	for field, value in zip(fields, values):
-		et.SubElement(account, field).text = value
-
+def search_id(id):
+	for index, record in enumerate(root.findall(record_tag)):
+		element = record.find(fields[0])
+		if (element.text == id):
+			return index
+	return None
+	
+def update_record():
+	action = "update"
+	id = get_userid_to_search(action)
+	index = search_id(id)
+	if not index:
+		print(f"No record with {fields[0]} {id} found to {action}")
+		return
+	record = root.findall(record_tag)[index]
+	print("Current Details")
+	for element in record:
+		print(f"{element.tag}: {element.text}")
+	new_value = input(f"Enter new value for {fields[-1]}: ")
+	record.find(fields[-1]).text = new_value
 	save_data()
-	print("Account added successfully!")
-	
-def update_record(): 
-	print("Updating...") 
-	
-def delete_record(): 
-	print("Deleting...")
+	print(f"Record with {fields[0]} {id} {action}d successfully")
 
+def delete_record():
+	action = "delete"
+	id = get_userid_to_search(action)
+	index = search_id(id)
+	if not index:
+		print(f"No record with {fields[0]} {id} found to {action}")
+		return
+	record = root.findall(record_tag)[index]
+	root.remove(record)
+	save_data()
+	print(f"Record with {fields[0]} {id} {action}d successfully")
+	
 def exiting():
-	print("Exiting program...")
-	save_data()
 	exit(0)
-
+	
 def main():
+	load_fields()
 	load_data()
 	while True:
 		display_menu()
@@ -85,6 +118,5 @@ def main():
 			operations[choice - 1]()
 		else:
 			print("Invalid choice. Try again.\n")
-
-
+			
 main()
