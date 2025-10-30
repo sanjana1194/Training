@@ -12,12 +12,12 @@ def fetch_weather(city):
 		if response.status_code == 200:
 			data = response.json()
 			temp = data['main']['temp']
-			print(f"{city:<15} | {temp:>5}°C")
+			print(f"{city }  :  {temp}°C")
 			return (city, temp)
 		else:
-			print(f"{city:<15} | Error: {response.status_code}")
+			print(f"{city}  :  Error: {response.status_code}")
 	except Exception as e:
-		print(f"{city:<15} | Failed: {e}")
+		print(f"{city}  :  Failed: {e}")
 
 def main():
 	cities = [
@@ -32,14 +32,13 @@ def main():
 	max_threads = min(10, len(cities))
 	results = []
 
-
-	with ThreadPoolExecutor(max_workers=max_threads) as executor:
+	with ThreadPoolExecutor(max_workers = max_threads) as executor:
 		for result in executor.map(fetch_weather, cities):
 			if result:
 				results.append(result)
+	#print(result)
 
 	end = time.time()
 	print(f"\nTotal time taken: {end - start:.2f} seconds")
 
-if __name__ == "__main__":
-	main()
+main()
