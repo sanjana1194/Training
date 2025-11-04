@@ -9,7 +9,7 @@ class Bank:
         self.create_table()
 
     def create_table(self):
-        self.cur.execute('create table if not exists accountdetails(accountno integer primarykey, name text not null, balance real not null)')
+        self.cur.execute('create table if not exists accountdetails(accountno INTEGER PRIMARY KEY, name TEXT NOT NULL, balance FLOAT NOT NULL)')
         self.conn.commit()
 
     def create_record(self):
@@ -29,7 +29,6 @@ class Bank:
                 print(f"Account: {counter}")
                 print(f"AccountNumber: {record[0]}\nName: {record[1]}\nBalance: {record[2]}")
                 counter += 1 
-        self.conn.commit()
 
     def exiting(self):
           self.conn.commit()
@@ -53,4 +52,5 @@ while True:
 			print("Invalid choice. Try again.")
 	except ValueError:
 		print("Please enter a valid number.")
+
 
