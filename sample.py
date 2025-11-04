@@ -1,10 +1,10 @@
 import sqlite3
 
-DATABASE_NAME = "Accounts.db"
+DATABASE_FILE = "Accounts.db"
 
 class Bank:
 	def __init__(self):
-		self.conn = sqlite3.connect(DATABASE_NAME)
+		self.conn = sqlite3.connect(DATABASE_FILE)
 		self.cur = self.conn.cursor()
 		self.create_table()
 
@@ -65,3 +65,4 @@ if __name__ == "__main__":
 				print("Invalid choice. Try again.")
 		except ValueError:
 			print("Please enter a valid number.")
+
