@@ -31,8 +31,6 @@ class Bank:
                 counter += 1 
         self.conn.commit()
 
-    
-
     def exiting(self):
           self.conn.commit()
           self.conn.close()
@@ -55,3 +53,4 @@ while True:
 			print("Invalid choice. Try again.")
 	except ValueError:
 		print("Please enter a valid number.")
+
