@@ -1,68 +1,57 @@
 import sqlite3
 
-DATABASE_FILE = "Accounts.db"
+DATABASE_FILE = "AccountsData.db"
 
 class Bank:
-	def __init__(self):
-		self.conn = sqlite3.connect(DATABASE_FILE)
-		self.cur = self.conn.cursor()
-		self.create_table()
+    def __init__(self):
+        self.conn = sqlite3.connect(DATABASE_FILE)
+        self.cur = self.conn.cursor()
+        self.create_table()
 
-	def create_table(self):
-		self.cur.execute('''CREATE TABLE IF NOT EXISTS Accounts(
-			AccountNo INTEGER PRIMARY KEY,
-			Name TEXT NOT NULL,
-			Balance REAL NOT NULL
-		)''')
-		self.conn.commit()
+    def create_table(self):
+        self.cur.execute('create table if not exists accountdetails(accountno integer primarykey, name text not null, balance real not null)')
+        self.conn.commit()
 
-	def create_account(self):
-		try:
-			acc_no = int(input("Enter Account Number: "))
-			name = input("Enter Name: ")
-			balance = float(input("Enter Balance: "))
-			self.cur.execute(
-				'INSERT INTO Accounts(AccountNo, Name, Balance) VALUES (?, ?, ?)',
-				(acc_no, name, balance)
-			)
-			self.conn.commit()
-			print("Account created successfully.")
-		except sqlite3.IntegrityError:
-			print("Account number already exists!")
+    def create_record(self):
+        acc_no = int(input("Enter Account Number: "))
+        name = input("Enter Name: ")
+        balance = float(input("Enter Balance: "))
+        self.cur.execute('insert into accountdetails(accountno, name, balance) values (?, ?, ?)', (acc_no, name, balance))
+        self.conn.commit()
 
-	def read_accounts(self):
-		self.cur.execute('SELECT * FROM Accounts')
-		records = self.cur.fetchall()
-		if records:
-			print("\n--- Accounts List ---")
-			for record in records:
-				print(f"AccountNo: {record[0]}, Name: {record[1]}, Balance: {record[2]}")
+    def read_records(self):
+        self.cur.execute('select * from accountdetails')
+        records = self.cur.fetchall()
+        counter = 1
+        if records:
+            print("______ACCOUNTS______")
+            for record in records:
+                print(f"Account: {counter}")
+                print(f"AccountNumber: {record[0]}\nName: {record[1]}\nBalance: {record[2]}")
+                counter += 1 
+        self.conn.commit()
+
+    
+
+    def exiting(self):
+          self.conn.commit()
+          self.conn.close()
+          print("Exiting....")
+db = Bank()
+
+while True:
+	print("\n===== ACCOUNT MENU =====")
+	print("1. Create Account")
+	print("2. View All Accounts")
+	print("3. Exit")
+
+	operations = [db.create_record, db.read_records, db.exiting]
+
+	try:
+		choice = int(input("Enter your choice: "))
+		if 1 <= choice <= len(operations):
+			operations[choice - 1]()
 		else:
-			print("No accounts found.")
-
-	def exit_program(self):
-		self.conn.close()
-		print("Exiting...")
-		exit()
-
-
-if __name__ == "__main__":
-	db = Bank()
-
-	while True:
-		print("\n===== ACCOUNT MENU =====")
-		print("1. Create Account")
-		print("2. View All Accounts")
-		print("3. Exit")
-
-		operations = [db.create_account, db.read_accounts, db.exit_program]
-
-		try:
-			choice = int(input("Enter your choice: "))
-			if 1 <= choice <= len(operations):
-				operations[choice - 1]()
-			else:
-				print("Invalid choice. Try again.")
-		except ValueError:
-			print("Please enter a valid number.")
-
+			print("Invalid choice. Try again.")
+	except ValueError:
+		print("Please enter a valid number.")
