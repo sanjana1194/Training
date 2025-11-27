@@ -1,9 +1,43 @@
-<html>
-    <head>
-        <title>Inventory Management</title>
-    </head>
-    <body>
-        <h1>Inventory Management System</h1>
-        <p>Welcome to the Inventory Management System. Here you can manage your products and stock levels.</p>
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Item Management</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <center>
+	<h1><center>Inventory</center></h1>
+
+	<div class="form-row">
+		<input type="text" id="itemId" placeholder="Enter Item Id">
+		<input type="text" id="description" placeholder="Enter Description">
+		<input type="number" id="unitPrice" placeholder="Enter Unit Price">
+		<input type="number" id="stockQty" placeholder="Enter Stock Quantity">
+		<input type="text" id="supplierId" placeholder="Enter Supplier Id">
+		<button id="saveBtn">Save Item</button>
+	</div>
+
+	<h2>Item Details</h2>
+
+	<table id="itemTable" border="1">
+		<thead>
+			<tr>
+				<th>Item Id</th>
+				<th>Description</th>
+				<th>Unit Price</th>
+				<th>Stock Quantity</th>
+				<th>Supplier Id</th>
+				
+				<th>Update</th>
+				<th>Remove</th>
+			</tr>
+		</thead>
+		<tbody id="tableBody">
+		</tbody>
+	</table>
+
+	<script src="items.js"></script>
+    </center>
+</body>
 </html>
